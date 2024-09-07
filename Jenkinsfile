@@ -1,5 +1,11 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'maven:3.8.7-openjdk-11'
+            label 'docker-agent'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
 
     environment {
         DOCKER_CREDENTIALS_ID = 'docker-credentials'
@@ -21,7 +27,7 @@ pipeline {
     // nuget setapikey 22f1a9d4-13ba-36c7-97f8-b41b4835c960 -source http://10.1.27.202:8081/repository/{repository name}/
     tools {
         maven 'Maven 3.8.7' // Use the Maven tool configured in Jenkins
-        dockerTool 'docker'
+        // dockerTool 'docker'
     }
     stages {
         stage('Checkout') {
