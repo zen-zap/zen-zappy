@@ -4,11 +4,11 @@ pipeline {
     environment {
         DOCKER_CREDENTIALS_ID = 'docker-credentials'
         NEXUS_CREDENTIALS_ID = 'nexus'
-        SONARQUBE_CREDENTIALS_ID = 'SonarQube'
-        SONARQUBE_URL = 'http://10.1.27.202:9000/'
-        NEXUS_URL = '10.1.27.202:8081'
-        NEXUS_REPOSITORY = 'nexus-repo-ashu-2-mixed'
-        SONARQUBE_TOKEN = 'squ_a792250b2379b83fbae3814afdcaabd4f3a24517'
+        SONARQUBE_CREDENTIALS_ID = 'sonar'
+        SONARQUBE_URL = 'http://44.223.54.73:9000/'
+        NEXUS_URL = '54.242.87.236:8081'
+        NEXUS_REPOSITORY = 'circad'
+        SONARQUBE_TOKEN = 'squ_0d762e5b52e55fd79db511f279eef339c771a202'
     }
 
     triggers {
@@ -25,7 +25,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/lawda-maxed-out/yash_gand_maare.git'
+                git branch: 'main', url: 'https://github.com/zen-zap/zen-zappy.git'
             }
         }
 
@@ -72,11 +72,31 @@ pipeline {
                 }
             }
         }
+
         stage('Debug Info') {
             steps {
                 sh 'mvn -version'
                 sh 'echo $NEXUS_URL'
                 sh 'echo $NEXUS_REPOSITORY'
+            }
+        }
+
+        stage('Build Docker') {
+            steps {
+                script {
+                    sh 'docker build -t my-app:latest .'
+                }
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: "$DOCKER_CREDENTIALS_ID", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                        sh 'docker push my-app:latest'
+                    }
+                }
             }
         }
     }

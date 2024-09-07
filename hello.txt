@@ -1,1 +1,4 @@
 // hello world
+// docker run -d --name nexus -p 8081:8081 sonatype/nexus3
+// squ_0d762e5b52e55fd79db511f279eef339c771a202
+// eust neka rnnq jvkr
