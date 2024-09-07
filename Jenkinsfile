@@ -21,6 +21,7 @@ pipeline {
     // nuget setapikey 22f1a9d4-13ba-36c7-97f8-b41b4835c960 -source http://10.1.27.202:8081/repository/{repository name}/
     tools {
         maven 'Maven 3.8.7' // Use the Maven tool configured in Jenkins
+        'org.jenkinsci.plugins.docker.commons.tools.DockerTool' '18.09'
     }
     stages {
         stage('Checkout') {
@@ -82,6 +83,12 @@ pipeline {
         }
 
         stage('Build Docker') {
+            agent {
+                docker {
+                    image 'docker:dind'
+                    args '-v /var/run/docker.sock:/var/run/docker.sock'
+                }
+        }
             steps {
                 dir('maven-app/my-app') {
                     sh 'docker build -t my-app:latest .'
