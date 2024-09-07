@@ -83,7 +83,7 @@ pipeline {
 
         stage('Build Docker') {
             steps {
-                script {
+                dir('maven-app/my-app') {
                     sh 'docker build -t my-app:latest .'
                 }
             }
