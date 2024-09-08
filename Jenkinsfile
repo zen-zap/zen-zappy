@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'lachlanevenson/k8s-kubectl:latest'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
+    agent any
 
     environment {
         DOCKER_CREDENTIALS_ID = 'docker-credentials'
