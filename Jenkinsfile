@@ -1,30 +1,21 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.8.7-openjdk-11'
-            label 'docker-agent'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
+    agent any
 
     environment {
         DOCKER_CREDENTIALS_ID = 'docker-credentials'
         NEXUS_CREDENTIALS_ID = 'nexus'
         SONARQUBE_CREDENTIALS_ID = 'sonar'
-        SONARQUBE_URL = 'http://44.223.54.73:9000/'
-        NEXUS_URL = '54.242.87.236:8081'
-        NEXUS_REPOSITORY = 'circad'
-        SONARQUBE_TOKEN = 'squ_0d762e5b52e55fd79db511f279eef339c771a202'
+        SONARQUBE_URL = 'http://54.152.193.254:9000/'
+        NEXUS_URL = '3.91.192.245:8081'
+        NEXUS_REPOSITORY = 'circad' // http://3.91.192.245:8081/repository/circad/
+        SONARQUBE_TOKEN = 'squ_040d4029f2a245903f5a3eefe8376dafa0fdfd59'
     }
 
     triggers {
         // Commented out since GitHub webhook is not used
         githubPush()
     }
-    // sqa_e6d2389b4260b9bb4d2eaddadfaa024852daf660
-    // sonar-user: squ_a792250b2379b83fbae3814afdcaabd4f3a24517
-    // 22f1a9d4-13ba-36c7-97f8-b41b4835c960
-    // nuget setapikey 22f1a9d4-13ba-36c7-97f8-b41b4835c960 -source http://10.1.27.202:8081/repository/{repository name}/
+
     tools {
         maven 'Maven 3.8.7' // Use the Maven tool configured in Jenkins
         // dockerTool 'docker'
@@ -89,12 +80,6 @@ pipeline {
         }
 
         stage('Build Docker') {
-            agent {
-                docker {
-                    image 'docker:dind'
-                    args '-v /var/run/docker.sock:/var/run/docker.sock'
-                }
-        }
             steps {
                 dir('maven-app/my-app') {
                     sh 'docker build -t my-app:latest .'
