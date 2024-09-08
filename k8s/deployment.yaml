@@ -12,6 +12,8 @@ spec:
       labels:
         app: my-app
     spec:
+      imagePullSecrets:
+      - name: dockerhub-secret
       containers:
       - name: my-app
         image: ashup340/my-app:latest
