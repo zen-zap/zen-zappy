@@ -12,8 +12,8 @@ spec:
       labels:
         app: my-app
     spec:
-      imagePullSecrets:
-      - name: dockerhub-secret
+      # imagePullSecrets:
+      # - name: dockerhub-secret
       containers:
       - name: my-app
         image: ashup340/my-app:latest
@@ -24,5 +24,5 @@ spec:
             cpu: "1"
             memory: "512Mi"
           requests:
-            cpu: "0.5"
+            cpu: "1"
             memory: "256Mi"
