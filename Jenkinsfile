@@ -82,7 +82,7 @@ pipeline {
         stage('Build Docker') {
             steps {
                 dir('maven-app/my-app') {
-                    sh 'docker build -t my-app:latest .'
+                    sh 'docker build -t ashup340/my-app:latest .'
                 }
             }
         }
@@ -92,7 +92,7 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: "$DOCKER_CREDENTIALS_ID", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-                        sh 'docker push my-app:latest'
+                        sh 'docker push ashup340/my-app:latest'
                     }
                 }
             }
