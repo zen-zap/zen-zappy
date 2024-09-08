@@ -9,16 +9,16 @@ pipeline {
         NEXUS_URL = '3.91.192.245:8081'
         NEXUS_REPOSITORY = 'circad' // http://3.91.192.245:8081/repository/circad/
         SONARQUBE_TOKEN = 'squ_040d4029f2a245903f5a3eefe8376dafa0fdfd59'
+        DOCKER_IMAGE = 'ashup340/my-app:latest'
+        KUBECONFIG_CREDENTIALS_ID = 'kubeconfig'
     }
 
     triggers {
-        // Commented out since GitHub webhook is not used
         githubPush()
     }
 
     tools {
-        maven 'Maven 3.8.7' // Use the Maven tool configured in Jenkins
-        // dockerTool 'docker'
+        maven 'Maven 3.8.7' 
     }
     stages {
         stage('Checkout') {
@@ -79,7 +79,7 @@ pipeline {
             }
         }
 
-        stage('Build Docker') {
+        stage('Build Docker Image') {
             steps {
                 dir('maven-app/my-app') {
                     sh 'docker build -t ashup340/my-app:latest .'
@@ -87,12 +87,23 @@ pipeline {
             }
         }
 
-        stage('Docker Push') {
+        stage('Push Image to Docker Hub') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: "$DOCKER_CREDENTIALS_ID", usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
                         sh 'docker push ashup340/my-app:latest'
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    withCredentials([file(credentialsId: KUBECONFIG_CREDENTIALS_ID, variable: 'KUBECONFIG')]) {
+                        sh 'kubectl apply -f k8s/deployment.yaml'
+                        sh 'kubectl apply -f k8s/service.yaml'
                     }
                 }
             }
